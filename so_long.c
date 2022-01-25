@@ -24,7 +24,7 @@ void	check_elements_count(t_var *vars)
 		if (vars->all_line[vars->length] == 'P')
 			pcount++;
 	}
-	vars->posit.item = ccount;
+	vars->posit.it = ccount;
 	if (ccount < 1 || ecount < 1 || pcount != 1)
 	{
 		ft_putstr_fd("Map has invalid count of special elements", 1);
@@ -192,9 +192,18 @@ void	define_textures(t_var *vars)
 
 	vars->tex.backg = mlx_xpm_file_to_image(vars->mlx,"./texture/backg.xpm", &width, &height);
 	vars->tex.collect = mlx_xpm_file_to_image(vars->mlx,"./texture/collect.xpm", &width, &height);
-	vars->tex.wall = mlx_xpm_file_to_image(vars->mlx,"./texture/wall.xpm", &width, &height);
+	vars->tex.wallcor00 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner00.xpm", &width, &height);
+	vars->tex.wallcor01 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner01.xpm", &width, &height);
+	vars->tex.wallcor10 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner10.xpm", &width, &height);
+	vars->tex.wallcor11 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner11.xpm", &width, &height);
+	vars->tex.wallup = mlx_xpm_file_to_image(vars->mlx,"./texture/wallup.xpm", &width, &height);
+	vars->tex.wallleft = mlx_xpm_file_to_image(vars->mlx,"./texture/wallleft.xpm", &width, &height);
+	vars->tex.wallright = mlx_xpm_file_to_image(vars->mlx,"./texture/wallright.xpm", &width, &height);
+	vars->tex.walldown = mlx_xpm_file_to_image(vars->mlx,"./texture/walldown.xpm", &width, &height);
+	vars->tex.wallcenter = mlx_xpm_file_to_image(vars->mlx,"./texture/wallcen.xpm", &width, &height);
 	vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/hero.xpm", &width, &height);
 	vars->tex.exit = mlx_xpm_file_to_image(vars->mlx,"./texture/door.xpm", &width, &height);
+	vars->tex.exit2 = mlx_xpm_file_to_image(vars->mlx,"./texture/door2.xpm", &width, &height);
 	//printf("%i::%i\n", width, height);
 }
 
@@ -211,87 +220,129 @@ int	draw_only(t_var *vars)
 		while (vars->mas_map[i][++j])
 		{
 			if (vars->mas_map[i][j] == '1')
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wall, 64 * j, 64 * i);
+			{
+				if (i == 0 && j == 0)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallcor00, SIZE * j, SIZE * i);
+				else if (i == vars->height - 1 && j == 0)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallcor01, SIZE * j, SIZE * i);
+				else if (i == 0 && j == vars->length - 1)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallcor10, SIZE * j, SIZE * i);
+				else if (i == vars->height - 1 && j == vars->length - 1)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallcor11, SIZE * j, SIZE * i);
+				else if (i > 0 && i < vars->length - 1 && j == 0)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallleft, SIZE * j, SIZE * i);
+				else if (j > 0 && j < vars->length - 1 && i == 0)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallup, SIZE * j, SIZE * i);
+				else if (i > 0 && i < vars->height - 1 && j == vars->length - 1)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallright, SIZE * j, SIZE * i);
+				else if (j > 0 && j < vars->length - 1 && i == vars->height - 1)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.walldown, SIZE * j, SIZE * i);
+				else
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.wallcenter, SIZE * j, SIZE * i);
+			}
 			else if (vars->mas_map[i][j] == 'P')
 			{
 				vars->posit.x = j;
 				vars->posit.y = i;
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, 64 * j, 64 * i);
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, 64 * j, 64 * i);
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, SIZE * j, SIZE * i);
 			}
 			else if (vars->mas_map[i][j] == '0')
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, 64 * j, 64 * i);
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
 			else if (vars->mas_map[i][j] == 'C')
 			{
 				vars->posit.item++;
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, 64 * j, 64 * i);
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.collect, 64 * j, 64 * i);
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.collect, SIZE * j, SIZE * i);
 			}
 			else if (vars->mas_map[i][j] == 'E')
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit, 64 * j, 64 * i);
+			{
+				if (vars->posit.it == 0)
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit2, SIZE * j, SIZE * i);
+				else
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit, SIZE * j, SIZE * i);
+			}
+
 		}
 	}
+	i = -1;
+		while (vars->mas_map[++i])
+		{
+			j = -1;
+			while (vars->mas_map[i][++j])
+			{
+				printf("%c ",vars->mas_map[i][++j]);
+			}
+			printf("\n");
+		}
+	vars->posit.it = vars->posit.item;
 	return (0);
 }
 int	move(int keycode, t_var *vars)
 {
-	printf("%i\n",vars->posit.item);
+	int	height;
+	int	width;
+	//printf("%i:: %i\n",vars->posit.item, vars->posit.it);
 	if (keycode == 13 || keycode == 126)
 	{
+		vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/herob.xpm", &width, &height);
 		if (vars->mas_map[vars->posit.y - 1][vars->posit.x] != '1' && vars->mas_map[vars->posit.y - 1][vars->posit.x] != 'E')
 		{
 			vars->mas_map[vars->posit.y - 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
-		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'E' && vars->posit.item == 0)
+		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'E' && vars->posit.it == 0)
 			exit(1);
 		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'C')
 		{
 			vars->mas_map[vars->posit.y - 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
-			vars->posit.item--;
+			//vars->posit.item--;
 		}
 	}
-	if (keycode == 0 || keycode == 123)
+	else if (keycode == 0 || keycode == 123)
 	{
+		vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/herol.xpm", &width, &height);
 		if (vars->mas_map[vars->posit.y][vars->posit.x - 1] != '1' && vars->mas_map[vars->posit.y][vars->posit.x - 1] != 'E')
 		{
 			vars->mas_map[vars->posit.y][vars->posit.x - 1] = 'P';
-			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
+			vars->mas_map[vars->posit.y][vars->posit.x] = '0';		
 		}
-		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'E' && vars->posit.item == 0)
+		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'E' && vars->posit.it == 0)
 			exit(1);
 		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'C')
 		{
 			vars->mas_map[vars->posit.y][vars->posit.x - 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
-			vars->posit.item--;
+			//vars->posit.item--;
 		}
 	}
-	if (keycode == 1 || keycode == 125)
+	else if (keycode == 1 || keycode == 125)
 	{
+		vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/hero.xpm", &width, &height);
 		if (vars->mas_map[vars->posit.y + 1][vars->posit.x] != '1' && vars->mas_map[vars->posit.y + 1][vars->posit.x] != 'E')
 		{
 			vars->mas_map[vars->posit.y + 1][vars->posit.x] = 'P';
-			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
+			vars->mas_map[vars->posit.y][vars->posit.x] = '0';		
 		}
-		else if (vars->mas_map[vars->posit.y + 1][vars->posit.x] == 'E' && vars->posit.item == 0)
+		else if (vars->mas_map[vars->posit.y + 1][vars->posit.x] == 'E' && vars->posit.it == 0)
 			exit(1);
 		else if (vars->mas_map[vars->posit.y+ 1][vars->posit.x] == 'C')
 		{
 			vars->mas_map[vars->posit.y + 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
-			vars->posit.item--;
+			//vars->posit.item--;
 		}
 	}
-	if (keycode == 2 || keycode == 124)
+	else if (keycode == 2 || keycode == 124)
 	{
+		vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/heror.xpm", &width, &height);
 		if (vars->mas_map[vars->posit.y][vars->posit.x + 1] != '1' && vars->mas_map[vars->posit.y][vars->posit.x + 1] != 'E')
 		{
 			vars->mas_map[vars->posit.y][vars->posit.x + 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
-		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'E' && vars->posit.item == 0)
+		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'E' && vars->posit.it == 0)
 			exit(1);
 		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'C')
 		{
@@ -315,7 +366,7 @@ void	map_drawing(t_var *vars)
 		ft_putstr_fd("Can't to connect with X-Server\n", 1);
 		exit(1);
 	}
-	vars->mlx_win = mlx_new_window(vars->mlx, vars->length * 64, vars->height * 64, "so_long");
+	vars->mlx_win = mlx_new_window(vars->mlx, vars->length * SIZE, vars->height * SIZE, "so_long");
 	define_textures(vars);
 	//img.img = mlx_new_image(vars->mlx, 1920, 1080);
 	//img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,

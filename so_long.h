@@ -6,12 +6,21 @@
 # include <mlx.h>
 # include "libft.h"
 # include "get_next_line.h"
-
+# define SIZE 64
 typedef struct s_tex
 {
 	char	*backg;
-	char	*wall;
+	char	*wallcor00;
+	char	*wallcor01;
+	char	*wallcor10;
+	char	*wallcor11;
+	char	*wallup;
+	char	*wallleft;
+	char	*walldown;
+	char	*wallright;
+	char	*wallcenter;
 	char	*exit;
+	char	*exit2;
 	char	*collect;
 	char	*hero;
 }	t_tex;
@@ -31,6 +40,7 @@ typedef struct s_posit
 	int	x;
 	int	y;
 	int	item;
+	int	it;
 }	t_posit;
 
 typedef struct s_key
