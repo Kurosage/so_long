@@ -192,6 +192,7 @@ void	define_textures(t_var *vars)
 
 	vars->tex.backg = mlx_xpm_file_to_image(vars->mlx,"./texture/backg.xpm", &width, &height);
 	vars->tex.collect = mlx_xpm_file_to_image(vars->mlx,"./texture/collect.xpm", &width, &height);
+	vars->tex.collect2 = mlx_xpm_file_to_image(vars->mlx,"./texture/collect2.xpm", &width, &height);
 	vars->tex.wallcor00 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner00.xpm", &width, &height);
 	vars->tex.wallcor01 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner01.xpm", &width, &height);
 	vars->tex.wallcor10 = mlx_xpm_file_to_image(vars->mlx,"./texture/corner10.xpm", &width, &height);
@@ -203,8 +204,14 @@ void	define_textures(t_var *vars)
 	vars->tex.wallcenter = mlx_xpm_file_to_image(vars->mlx,"./texture/wallcen.xpm", &width, &height);
 	vars->tex.hero = mlx_xpm_file_to_image(vars->mlx,"./texture/hero.xpm", &width, &height);
 	vars->tex.exit = mlx_xpm_file_to_image(vars->mlx,"./texture/door.xpm", &width, &height);
-	vars->tex.exit2 = mlx_xpm_file_to_image(vars->mlx,"./texture/door2.xpm", &width, &height);
-	//printf("%i::%i\n", width, height);
+	//vars->tex.exit2[7] = mlx_xpm_file_to_image(vars->mlx,"./texture/door7.xpm", &width, &height);
+	//vars->tex.exit2[6] = mlx_xpm_file_to_image(vars->mlx,"./texture/door6.xpm", &width, &height);
+	vars->tex.exit2[5] = mlx_xpm_file_to_image(vars->mlx,"./texture/door5.xpm", &width, &height);
+	vars->tex.exit2[4] = mlx_xpm_file_to_image(vars->mlx,"./texture/door4.xpm", &width, &height);
+	vars->tex.exit2[3] = mlx_xpm_file_to_image(vars->mlx,"./texture/door3.xpm", &width, &height);
+	vars->tex.exit2[2] = mlx_xpm_file_to_image(vars->mlx,"./texture/door2.xpm", &width, &height);
+	vars->tex.exit2[1] = mlx_xpm_file_to_image(vars->mlx,"./texture/door1.xpm", &width, &height);
+	vars->tex.exit2[0] = mlx_xpm_file_to_image(vars->mlx,"./texture/door0.xpm", &width, &height);
 }
 
 int	draw_only(t_var *vars)
@@ -245,7 +252,7 @@ int	draw_only(t_var *vars)
 				vars->posit.x = j;
 				vars->posit.y = i;
 				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
-				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, SIZE * j, SIZE * i);
+				//mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, SIZE * j, SIZE * i);
 			}
 			else if (vars->mas_map[i][j] == '0')
 				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
@@ -258,23 +265,25 @@ int	draw_only(t_var *vars)
 			else if (vars->mas_map[i][j] == 'E')
 			{
 				if (vars->posit.it == 0)
-					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit2, SIZE * j, SIZE * i);
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit2[5], SIZE * j, SIZE * i);
 				else
 					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit, SIZE * j, SIZE * i);
 			}
 
 		}
+
 	}
+	mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, SIZE * vars->posit.x, SIZE * vars->posit.y);
 	i = -1;
-		while (vars->mas_map[++i])
+	while (vars->mas_map[++i])
+	{
+		j = -1;
+		while (vars->mas_map[i][++j])
 		{
-			j = -1;
-			while (vars->mas_map[i][++j])
-			{
-				printf("%c ",vars->mas_map[i][++j]);
-			}
-			printf("\n");
+			printf("%c ",vars->mas_map[i][++j]);
 		}
+		printf("\n");
+	}
 	vars->posit.it = vars->posit.item;
 	return (0);
 }
@@ -291,14 +300,14 @@ int	move(int keycode, t_var *vars)
 			vars->mas_map[vars->posit.y - 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
-		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'E' && vars->posit.it == 0)
-			exit(1);
 		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'C')
 		{
 			vars->mas_map[vars->posit.y - 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 			//vars->posit.item--;
 		}
+		else if (vars->mas_map[vars->posit.y - 1][vars->posit.x] == 'E' && vars->posit.it == 0)
+			exit(1);
 	}
 	else if (keycode == 0 || keycode == 123)
 	{
@@ -308,14 +317,14 @@ int	move(int keycode, t_var *vars)
 			vars->mas_map[vars->posit.y][vars->posit.x - 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';		
 		}
-		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'E' && vars->posit.it == 0)
-			exit(1);
 		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'C')
 		{
 			vars->mas_map[vars->posit.y][vars->posit.x - 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 			//vars->posit.item--;
 		}
+		else if (vars->mas_map[vars->posit.y][vars->posit.x - 1] == 'E' && vars->posit.it == 0)
+			exit(1);
 	}
 	else if (keycode == 1 || keycode == 125)
 	{
@@ -323,16 +332,16 @@ int	move(int keycode, t_var *vars)
 		if (vars->mas_map[vars->posit.y + 1][vars->posit.x] != '1' && vars->mas_map[vars->posit.y + 1][vars->posit.x] != 'E')
 		{
 			vars->mas_map[vars->posit.y + 1][vars->posit.x] = 'P';
-			vars->mas_map[vars->posit.y][vars->posit.x] = '0';		
+			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
-		else if (vars->mas_map[vars->posit.y + 1][vars->posit.x] == 'E' && vars->posit.it == 0)
-			exit(1);
-		else if (vars->mas_map[vars->posit.y+ 1][vars->posit.x] == 'C')
+		else if (vars->mas_map[vars->posit.y + 1][vars->posit.x] == 'C')
 		{
 			vars->mas_map[vars->posit.y + 1][vars->posit.x] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 			//vars->posit.item--;
 		}
+		else if (vars->mas_map[vars->posit.y + 1][vars->posit.x] == 'E' && vars->posit.it == 0)
+			exit(1);
 	}
 	else if (keycode == 2 || keycode == 124)
 	{
@@ -342,17 +351,102 @@ int	move(int keycode, t_var *vars)
 			vars->mas_map[vars->posit.y][vars->posit.x + 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
-		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'E' && vars->posit.it == 0)
-			exit(1);
 		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'C')
 		{
 			vars->mas_map[vars->posit.y][vars->posit.x + 1] = 'P';
 			vars->mas_map[vars->posit.y][vars->posit.x] = '0';
 		}
+		else if (vars->mas_map[vars->posit.y][vars->posit.x + 1] == 'E' && vars->posit.it == 0)
+			exit(1);
 	}
+	draw_only(vars);
 	if (keycode == 53)
 		exit(1);
 	return (0);
+}
+void	mas_door(t_var *vars, int i, int j)
+{
+	static int count;
+
+	if (count == 5)
+		mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit2[5], SIZE * j, SIZE * i);
+	while (count < 5)
+	{
+		mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit2[count], SIZE * j, SIZE * i);
+		count++;
+	}
+}
+int draw_anim(t_var *vars)
+{
+	int	i;
+	int	j;
+
+	timer(vars);
+	i = -1;
+	vars->posit.item = 0;
+	while (vars->mas_map[++i])
+	{
+		j = -1;
+		while (vars->mas_map[i][++j])
+		{
+
+			if (vars->mas_map[i][j] == 'P')
+			{
+				vars->posit.x = j;
+				vars->posit.y = i;
+				mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
+			}
+			else if (vars->mas_map[i][j] == 'C')
+			{
+				vars->posit.item++;
+				if (vars->flag.down % 50 == 0)
+				{
+					printf("\n%i\n",vars->flag.down );
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.collect, SIZE * j, SIZE * i);
+				}
+				else if (vars->flag.down % 50 == 25)
+				{
+					printf("\n%i\n",vars->flag.down );
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, SIZE * j, SIZE * i);
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.collect2, SIZE * j, SIZE * i);
+				}
+			}
+			else if (vars->mas_map[i][j] == 'E')
+			{
+				if (vars->posit.it == 0)
+					mas_door(vars,i , j);
+				else
+					mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.exit, SIZE * j, SIZE * i);
+			}
+
+		}
+
+	}
+	if (vars->flag.down == 0)
+		vars->flag.down = 1;
+	else if (vars->flag.down == 1)
+		vars->flag.down = 0;
+	mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.hero, SIZE * vars->posit.x, SIZE * vars->posit.y);
+	return (0);
+}
+
+void timer(t_var *vars)
+{
+	vars->flag.down++;	
+	if ((vars->flag.down % 50 == 0 || vars->flag.down % 50 == 25) &&vars->flag.down !=  1001)
+	{
+		return ;
+	}
+	else if (vars->flag.down ==  1001)
+	{
+		vars->flag.down = 0;
+		return ;
+	}
+	else
+	{
+		vars->flag.down++;
+	}
 }
 void	map_drawing(t_var *vars)
 {
@@ -368,14 +462,10 @@ void	map_drawing(t_var *vars)
 	}
 	vars->mlx_win = mlx_new_window(vars->mlx, vars->length * SIZE, vars->height * SIZE, "so_long");
 	define_textures(vars);
-	//img.img = mlx_new_image(vars->mlx, 1920, 1080);
-	//img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,
-			//&img.line_length, &img.endian);
-	//i = -1;
-	//my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
-	mlx_loop_hook(vars->mlx, draw_only, vars);
-	//mlx_key_hook(vars->mlx_win, move, vars);
+	draw_only(vars);
+	mlx_loop_hook(vars->mlx, draw_anim, vars);
 	mlx_hook(vars->mlx_win, 2, 1L<<0, move, vars);
+	//mlx_key_hook(vars->mlx_win, move, vars);
 	//move(vars);
 	//mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, 64, 64);
 	//mlx_put_image_to_window(vars->mlx, vars->mlx_win, vars->tex.backg, 0, 0);
@@ -394,6 +484,8 @@ int	main(int argc, char **argv)
 {
 	t_var	vars;
 
+	vars.flag.down = 0;
+	vars.flag.up = 0;
 	vars.posit.item = 0;
 	if (argc == 2)
 	{

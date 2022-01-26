@@ -20,8 +20,9 @@ typedef struct s_tex
 	char	*wallright;
 	char	*wallcenter;
 	char	*exit;
-	char	*exit2;
+	char	*exit2[7];
 	char	*collect;
+	char	*collect2;
 	char	*hero;
 }	t_tex;
 
@@ -50,7 +51,13 @@ typedef struct s_key
 	int	left;
 	int	right;
 }	t_key;
-
+typedef	struct s_flags
+{
+	int up;
+	int down;
+	int left;
+	int right;
+} t_flags;
 typedef struct s_var
 {
 	char	*all_line;
@@ -61,11 +68,15 @@ typedef struct s_var
 	int		length_win;
 	void	*mlx;
 	void	*mlx_win;
+	t_flags	flag;
 	t_tex	tex;
 	t_data	data;
 	t_posit	posit;
 	t_key	key;
 }	t_var;
+void	mas_door(t_var *vars, int i, int j);
+void	timer(t_var *vars);
+int draw_anim(t_var *vars);
 int	move(int keycode, t_var *vars);
 void	map_drawing(t_var *vars);
 void	define_textures(t_var *vars);
